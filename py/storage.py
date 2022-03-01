@@ -7,9 +7,9 @@ import csv
 
 class Storage(object):
     """Storage class."""
-    
+
     def __init__(self):
-        
+
         # Change this to your data and saves folders
         self.data_folder = r'../data/'
         #print('data_folder: {}'.format(self.data_folder))
@@ -37,10 +37,10 @@ class Storage(object):
             os.makedirs(name=self.data_csv_folder, exist_ok=True)
             os.makedirs(name=self.saves_pickle_folder, exist_ok=True)
             os.makedirs(name=self.saves_csv_folder, exist_ok=True)
-        
+
         # Handy list of the different types of encodings
         self.encoding_type = ['latin1', 'iso8859-1', 'utf-8'][2]
-    
+
     def load_csv(self, csv_name=None, folder_path=None):
         if folder_path is None:
             csv_folder = self.data_csv_folder
@@ -55,13 +55,22 @@ class Storage(object):
             else:
                 csv_path = os.path.join(csv_folder, f'{csv_name}.csv')
         data_frame = pd.read_csv(os.path.abspath(csv_path), encoding=self.encoding_type)
-        
+
         return(data_frame)
 
     def pickle_exists(self, pickle_name):
         pickle_path = os.path.join(self.saves_pickle_folder, '{}.pickle'.format(pickle_name))
-        
+
         return os.path.isfile(pickle_path)
+
+    def csv_exists(self, csv_name, folder_path=None):
+        if folder_path is None:
+            csv_folder = self.data_csv_folder
+        else:
+            csv_folder = os.path.join(folder_path, 'csv')
+        csv_path = os.path.join(csv_folder, '{}.csv'.format(csv_name))
+
+        return os.path.isfile(csv_path)
 
     def load_dataframes(self, **kwargs):
         frame_dict = {}
@@ -84,7 +93,7 @@ class Storage(object):
                     frame_dict[frame_name] = self.load_csv(csv_name=frame_name, folder_path=self.saves_folder)
             else:
                 frame_dict[frame_name] = self.load_object(frame_name)
-        
+
         return frame_dict
 
     def load_object(self, obj_name, download_url=None):
@@ -103,7 +112,7 @@ class Storage(object):
                 self.attempt_to_pickle(object, pickle_path, raise_exception=False)
             else:
                 with open(pickle_path, 'wb') as handle:
-                
+
                     # Protocal 4 is not handled in python 2
                     if sys.version_info.major == 2:
                         pickle.dump(object, handle, 2)
@@ -115,7 +124,7 @@ class Storage(object):
             except:
                 with open(pickle_path, 'rb') as handle:
                     object = pickle.load(handle)
-        
+
         return(object)
 
     def save_dataframes(self, include_index=False, **kwargs):
@@ -138,7 +147,7 @@ class Storage(object):
                 if verbose:
                     print('Pickling to {}'.format(os.path.abspath(pickle_path)))
                 with open(pickle_path, 'wb') as handle:
-                
+
                     # Protocal 4 is not handled in python 2
                     if sys.version_info.major == 2:
                         pickle.dump(kwargs[obj_name], handle, 2)
@@ -149,13 +158,13 @@ class Storage(object):
         try:
             if verbose:
                 print('Pickling to {}'.format(os.path.abspath(pickle_path)))
-        
+
             # Protocal 4 is not handled in python 2
             if sys.version_info.major == 2:
                 df.to_pickle(pickle_path, protocol=2)
             elif sys.version_info.major == 3:
                 df.to_pickle(pickle_path, protocol=pickle.HIGHEST_PROTOCOL)
-        
+
         except Exception as e:
             os.remove(pickle_path)
             if verbose:

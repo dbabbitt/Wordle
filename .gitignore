@@ -1,0 +1,18 @@
+
+# Exclude specific files
+
+# Ignore whole folders
+**/.git/
+
+# Ignore certain kinds of saved images
+saves/png/img_*.png
+saves/png/transformed_img_*.png
+saves/png/window_*.png
+
+# Exclude Jupyter admin files
+**/.ipynb_checkpoints
+**/__pycache__/
+*-checkpoint.ipynb
+
+# Exclude Desktop Services Store files
+**/.DS_Store

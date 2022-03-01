@@ -43,13 +43,13 @@ class WordleUtilities(object):
 
             self.words_list = []
             az_regex = re.compile('[^a-z]')
-            file_path = r'D:\Documents\GitHub\notebooks\data\txt\wordle_words_short_list.txt'
+            file_path = r'../data/txt/wordle_words_short_list.txt'
             with open(file_path, encoding='utf8') as infile:
                 for line in infile:
                     word_str = line.strip()
                     if (len(word_str) == 5) and not az_regex.search(word_str):
                         self.words_list.append(word_str)
-            file_path = r'D:\Documents\GitHub\notebooks\data\txt\wordle_words_long_list.txt'
+            file_path = r'../data/txt/wordle_words_long_list.txt'
             with open(file_path, encoding='utf8') as infile:
                 for line in infile:
                     word_str = line.strip()
@@ -70,7 +70,10 @@ class WordleUtilities(object):
         if self.s.pickle_exists('wordle_response_patterns_df'):
             self.response_patterns_df = self.s.load_object('wordle_response_patterns_df')
         else:
-            self.response_patterns_df = self.s.load_csv('response_patterns_df', folder_path=self.s.saves_folder)
+            if self.csv_exists('response_patterns_df', folder_path=self.saves_folder):
+                self.response_patterns_df = self.s.load_csv('response_patterns_df', folder_path=self.s.saves_folder)
+            else:
+                self.response_patterns_df = pd.DataFrame([], columns=['test_word', 'target_word', 'response_pattern'])
             if not self.response_patterns_df.shape[0]:
                 rows_list = []
                 for test_word in self.words_list:
@@ -82,7 +85,7 @@ class WordleUtilities(object):
                         rows_list.append(row_dict)
                 self.response_patterns_df = pd.DataFrame(rows_list)
             self.s.store_objects(wordle_response_patterns_df=self.response_patterns_df)
-            
+
         self.wordle_url = 'https://www.nytimes.com/games/wordle/index.html'
         self.quordle_url = 'https://www.quordle.com/#/'
 
@@ -121,7 +124,7 @@ class WordleUtilities(object):
             self.tree_first_guess = self.get_word_guess(self.response_patterns_df, self.words_list)
             if verbose:
                 print(f'FIRST MOVE: {self.tree_first_guess}')
-        
+
         if len(response_patterns_list) == 1:
             self.tree_first_candidates_list = self.get_candidates_list(testwords_list, response_patterns_list)
             if verbose:
@@ -129,7 +132,7 @@ class WordleUtilities(object):
             self.tree_second_guess = self.get_word_guess(self.response_patterns_df, self.tree_first_candidates_list, guesses_list=testwords_list)
             if verbose:
                 print(f'SECOND MOVE: {self.tree_second_guess}')
-        
+
         if len(response_patterns_list) == 2:
             self.tree_second_candidates_list = self.get_candidates_list(testwords_list, response_patterns_list, self.tree_first_candidates_list)
             if verbose:
@@ -137,7 +140,7 @@ class WordleUtilities(object):
             self.tree_third_guess = self.get_word_guess(self.response_patterns_df, self.tree_second_candidates_list, guesses_list=testwords_list)
             if verbose:
                 print(f'THIRD MOVE: {self.tree_third_guess}')
-        
+
         if len(response_patterns_list) == 3:
             self.tree_third_candidates_list = self.get_candidates_list(testwords_list, response_patterns_list, self.tree_second_candidates_list)
             if verbose:
@@ -145,7 +148,7 @@ class WordleUtilities(object):
             self.tree_fourth_guess = self.get_word_guess(self.response_patterns_df, self.tree_third_candidates_list, guesses_list=testwords_list)
             if verbose:
                 print(f'FOURTH MOVE: {self.tree_fourth_guess}')
-        
+
         if len(response_patterns_list) == 4:
             self.tree_fourth_candidates_list = self.get_candidates_list(testwords_list, response_patterns_list, self.tree_third_candidates_list)
             if verbose:
@@ -153,7 +156,7 @@ class WordleUtilities(object):
             self.tree_fifth_guess = self.get_word_guess(self.response_patterns_df, self.tree_fourth_candidates_list, guesses_list=testwords_list)
             if verbose:
                 print(f'FIFTH MOVE: {self.tree_fifth_guess}')
-        
+
         if len(response_patterns_list) == 5:
             self.tree_fifth_candidates_list = self.get_candidates_list(testwords_list, response_patterns_list, self.tree_fourth_candidates_list)
             if verbose:
@@ -161,7 +164,7 @@ class WordleUtilities(object):
             self.tree_sixth_guess, max_score = self.get_best_word(self.tree_fifth_candidates_list)
             if verbose:
                 print(f'SIXTH MOVE: {self.tree_sixth_guess}')
-        
+
         if len(response_patterns_list) == 6:
             self.tree_sixth_candidates_list = self.get_candidates_list(testwords_list, response_patterns_list, self.tree_fifth_candidates_list)
             if verbose:
@@ -169,7 +172,7 @@ class WordleUtilities(object):
             self.tree_seventh_guess, max_score = self.get_best_word(self.tree_sixth_candidates_list)
             if verbose:
                 print(f'SEVENTH MOVE: {self.tree_seventh_guess}')
-        
+
         if len(response_patterns_list) == 7:
             self.tree_seventh_candidates_list = self.get_candidates_list(testwords_list, response_patterns_list, self.tree_sixth_candidates_list)
             if verbose:
@@ -467,7 +470,7 @@ class WordleUtilities(object):
 
 
     def get_greys_list(self, testwords_list, response_patterns_list):
-        greens_set = self.get_greens_set(testwords_list, response_patterns_list)    
+        greens_set = self.get_greens_set(testwords_list, response_patterns_list)
         yellows_set = self.get_yellows_set(testwords_list, response_patterns_list)
         greys_set = set()
         for test_word, response_pattern in zip(testwords_list, response_patterns_list):
