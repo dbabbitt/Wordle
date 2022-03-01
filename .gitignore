@@ -1,5 +1,7 @@
 
 # Exclude specific files
+saves/csv/response_patterns_df.csv
+saves/pickle/wordle_response_patterns_df.pickle
 
 # Ignore whole folders
 **/.git/
