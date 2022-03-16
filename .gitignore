@@ -1,7 +1,7 @@
 
 # Exclude specific files
 saves/csv/response_patterns_df.csv
-saves/pickle/wordle_response_patterns_df.pickle
+saves/pkl/wordle_response_patterns_df.pkl
 
 # Ignore whole folders
 **/.git/
@@ -18,3 +18,4 @@ saves/png/window_*.png
 
 # Exclude Desktop Services Store files
 **/.DS_Store
+saves/pkl/wordle_response_patterns_df.pkl
