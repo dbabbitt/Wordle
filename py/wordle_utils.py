@@ -67,10 +67,18 @@ class WordleUtilities(object):
             self.s.store_objects(wordle_words_list=self.words_list)
 
         # Get the response patterns
+        # self.get_the_response_patterns()
+
+        self.wordle_url = 'https://www.nytimes.com/games/wordle/index.html'
+        self.quordle_url = 'https://www.quordle.com/#/'
+
+
+
+    def get_the_response_patterns(self):
         if self.s.pickle_exists('wordle_response_patterns_df'):
             self.response_patterns_df = self.s.load_object('wordle_response_patterns_df')
         else:
-            if self.csv_exists('response_patterns_df', folder_path=self.saves_folder):
+            if self.s.csv_exists('response_patterns_df', folder_path=self.s.saves_folder):
                 self.response_patterns_df = self.s.load_csv('response_patterns_df', folder_path=self.s.saves_folder)
             else:
                 self.response_patterns_df = pd.DataFrame([], columns=['test_word', 'target_word', 'response_pattern'])
@@ -85,9 +93,6 @@ class WordleUtilities(object):
                         rows_list.append(row_dict)
                 self.response_patterns_df = pd.DataFrame(rows_list)
             self.s.store_objects(wordle_response_patterns_df=self.response_patterns_df)
-
-        self.wordle_url = 'https://www.nytimes.com/games/wordle/index.html'
-        self.quordle_url = 'https://www.quordle.com/#/'
 
 
 

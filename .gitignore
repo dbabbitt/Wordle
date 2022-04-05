@@ -19,3 +19,6 @@ saves/png/window_*.png
 # Exclude Desktop Services Store files
 **/.DS_Store
 saves/pkl/wordle_response_patterns_df.pkl
+data/300d/glove.840B.300d.txt
+data/50d/glove.6B.50d.txt
+saves/pickle/wordle_response_patterns_df.pickle
